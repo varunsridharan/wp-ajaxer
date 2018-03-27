@@ -65,8 +65,8 @@ class BoilerPlate_Ajax extends VSP_Ajaxer {
 	 */
 	protected $single_ajax_key = '';
 
-	public function __construct( array $options = array(), array $defaults = array() ) {
-		parent::__construct( $options, $defaults );
+	public function __construct( ) {
+		parent::__construct();
 	}
 
 	public function action1() {
