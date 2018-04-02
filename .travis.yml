@@ -21,6 +21,3 @@ after_script:
           git commit -m "API Regenerated"
           git push origin master:gh-pages -f
         fi
-        
-notifications:
-    email: never
