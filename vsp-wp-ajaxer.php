@@ -1,14 +1,17 @@
 <?php
 /**
+ * File: class-ajaxer.php
  * Date: 26-03-2018
  * Time: 12:21 PM
  *
- * @link      : https://github.com/varunsridharan/vsp-wp-ajaxer/
- * @version   : 1.0
+ * @link    http://github.com/varunsridharan/vsp-framework/
+ * @version 1.0
+ * @since   1.0
  *
- * @author    : Varun Sridharan <varunsridharan23@gmail.com>
- * @copyright : 2018 Varun Sridharan
- * @license   : GPLV3 Or Greater
+ * @package   vs-wp-libs
+ * @author    Varun Sridharan <varunsridharan23@gmail.com>
+ * @copyright 2018 Varun Sridharan
+ * @license   GPLV3 Or Greater
  */
 
 abstract class VSP_Ajaxer {
@@ -74,7 +77,8 @@ abstract class VSP_Ajaxer {
 	 * @param array $options
 	 * @param array $defaults
 	 */
-	public function __construct() {
+	public function __construct( $options = array(), $defaults = array() ) {
+		parent::__construct( $options, $defaults );
 		$this->init();
 	}
 
@@ -155,7 +159,7 @@ abstract class VSP_Ajaxer {
 	protected function extract_action_slug( $action ) {
 		$action = str_replace( $this->action_prefix, '', $action );
 		$action = str_replace( $this->action_surfix, '', $action );
-		return vsp_fix_slug( $action );
+		return $action;
 	}
 
 	/**
@@ -172,11 +176,11 @@ abstract class VSP_Ajaxer {
 		$_function_action = $this->extract_action_slug( $action );
 		if ( method_exists( $this, $this->function_name( $_function_action ) ) ) {
 			$function = $this->function_name( $_function_action );
-			do_action( 'ajax_before_' . $action );
+			do_action( 'vs_wp_ajax_before_' . $action );
 			$this->$function();
-			do_action( 'ajax_after_' . $action );
+			do_action( 'vs_wp_ajax_after_' . $action );
 		} else {
-			do_action( 'ajax_' . $action );
+			do_action( 'vs_wp_ajax_' . $action );
 		}
 	}
 
@@ -211,7 +215,7 @@ abstract class VSP_Ajaxer {
 	 * @return string|bool|boolean
 	 */
 	public function is_get() {
-		return $this->requestType( "GET" );
+		return $this->requestType( 'GET' );
 	}
 
 	/**
@@ -227,7 +231,7 @@ abstract class VSP_Ajaxer {
 			if ( is_array( $type ) ) {
 				return in_array( $_SERVER['REQUEST_METHOD'], array_map( 'strtoupper', $type ) );
 			}
-			return ( $_SERVER['REQUEST_METHOD'] === strtoupper( $type ) );
+			return ( strtoupper( $type ) === $_SERVER['REQUEST_METHOD'] );
 		}
 		return $_SERVER['REQUEST_METHOD'];
 	}
