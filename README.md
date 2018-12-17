@@ -1,11 +1,34 @@
-# VSP WP Ajaxer
+# WP Ajaxer
 Simple Lightweight Ajax Handler For WP Theme/Plugin Developers
 
 
-### Sample Usage
+## Installation
+The preferred way to install this extension is through [Composer](http://getcomposer.org/download/).
+
+To install **WP_Ajaxer library**, simply:
+
+    $ composer require Varunsridharan/WP_Ajaxer
+
+The previous command will only install the necessary files, if you prefer to **download the entire source code** you can use:
+
+    $ composer require Varunsridharan/WP_Ajaxer --prefer-source
+
+You can also **clone the complete repository** with Git:
+
+    $ git clone https://github.com/varunsridharan/wp-ajaxer.git
+
+Or **install it manually**:
+
+[Download WP_Ajaxer.php](https://raw.githubusercontent.com/varunsridharan/wp-ajaxer/master/class-ajaxer.php):
+
+    $ wget https://raw.githubusercontent.com/varunsridharan/wp-ajaxer/master/class-ajaxer.php
+
+
+
+## Sample Usage
 ```php
 
-class BoilerPlate_Ajax extends VSP_Ajaxer {
+class BoilerPlate_Ajax extends Varunsridharan\WordPress\Ajaxer {
 	/**
 	 * Ajax Action Prefix
 	 *

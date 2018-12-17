@@ -1,20 +1,22 @@
 <?php
 /**
- * File: class-ajaxer.php
- * Date: 26-03-2018
- * Time: 12:21 PM
+ * Simple Lightweight Ajax Handler For WP Theme/Plugin Developers
  *
- * @link    http://github.com/varunsridharan/vsp-framework/
- * @version 1.0
- * @since   1.0
- *
- * @package   vs-wp-libs
  * @author    Varun Sridharan <varunsridharan23@gmail.com>
  * @copyright 2018 Varun Sridharan
  * @license   GPLV3 Or Greater
  */
 
-abstract class VSP_Ajaxer {
+namespace Varunsridharan\WordPress;
+
+/**
+ * Class Ajaxer
+ *
+ * @package Varunsridharan\WordPress
+ * @author Varun Sridharan <varunsridharan23@gmail.com>
+ * @since 1.0
+ */
+abstract class Ajaxer {
 	/**
 	 * Ajax Action Prefix
 	 *
@@ -72,27 +74,16 @@ abstract class VSP_Ajaxer {
 	protected $single_ajax_key = '';
 
 	/**
-	 * VSP_Ajaxer constructor.
-	 *
-	 * @param array $options
-	 * @param array $defaults
+	 * Ajaxer constructor.
 	 */
-	public function __construct( $options = array(), $defaults = array() ) {
-		parent::__construct( $options, $defaults );
-		$this->init();
-	}
-
-	/**
-	 * Register Hooks With WP.
-	 */
-	protected function init() {
+	public function __construct() {
 		if ( true === $this->is_single ) {
-			add_action( 'wp_ajax_' . $this->action, array( &$this, 'ajax_request_single' ) );
+			\add_action( 'wp_ajax_' . $this->action, array( &$this, 'ajax_request_single' ) );
 		} else {
 			foreach ( $this->actions as $action => $nopriv ) {
-				add_action( 'wp_ajax_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
+				\add_action( 'wp_ajax_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
 				if ( $nopriv ) {
-					add_action( 'wp_ajax_nopriv_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
+					\add_action( 'wp_ajax_nopriv_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
 				}
 			}
 		}
@@ -139,14 +130,14 @@ abstract class VSP_Ajaxer {
 		$_action = $this->extract_action_slug( $action );
 
 		if ( false !== $action && isset( $this->actions[ $_action ] ) ) {
-			if ( false === is_user_logged_in() && true === $this->actions[ $_action ] ) {
+			if ( false === \is_user_logged_in() && true === $this->actions[ $_action ] ) {
 				$this->trigger_ajax_callback( $action );
-			} elseif ( is_user_logged_in() === true ) {
+			} elseif ( \is_user_logged_in() === true ) {
 				$this->trigger_ajax_callback( $action );
 			}
 		}
 
-		wp_die( 0 );
+		\wp_die( 0 );
 	}
 
 	/**
@@ -176,11 +167,11 @@ abstract class VSP_Ajaxer {
 		$_function_action = $this->extract_action_slug( $action );
 		if ( method_exists( $this, $this->function_name( $_function_action ) ) ) {
 			$function = $this->function_name( $_function_action );
-			do_action( 'vs_wp_ajax_before_' . $action );
+			\do_action( 'vs_wp_ajax_before_' . $action );
 			$this->$function();
-			do_action( 'vs_wp_ajax_after_' . $action );
+			\do_action( 'vs_wp_ajax_after_' . $action );
 		} else {
-			do_action( 'vs_wp_ajax_' . $action );
+			\do_action( 'vs_wp_ajax_' . $action );
 		}
 	}
 
@@ -192,7 +183,7 @@ abstract class VSP_Ajaxer {
 	 * @return mixed
 	 */
 	protected function function_name( $action ) {
-		return str_replace( '-', '_', sanitize_key( $action ) );
+		return str_replace( '-', '_', \sanitize_key( $action ) );
 	}
 
 	/**
@@ -206,7 +197,7 @@ abstract class VSP_Ajaxer {
 			$this->trigger_ajax_callback( $_action );
 		}
 
-		wp_die( 0 );
+		\wp_die( 0 );
 	}
 
 	/**
@@ -215,7 +206,7 @@ abstract class VSP_Ajaxer {
 	 * @return string|bool|boolean
 	 */
 	public function is_get() {
-		return $this->requestType( 'GET' );
+		return $this->request_type( 'GET' );
 	}
 
 	/**
@@ -226,7 +217,7 @@ abstract class VSP_Ajaxer {
 	 *
 	 * @return string
 	 */
-	public function requestType( $type = null ) {
+	public function request_type( $type = null ) {
 		if ( ! is_null( $type ) ) {
 			if ( is_array( $type ) ) {
 				return in_array( $_SERVER['REQUEST_METHOD'], array_map( 'strtoupper', $type ) );
@@ -242,7 +233,7 @@ abstract class VSP_Ajaxer {
 	 * @return string|bool|boolean
 	 */
 	public function is_post() {
-		return $this->requestType( 'POST' );
+		return $this->request_type( 'POST' );
 	}
 
 	/**
