@@ -50,6 +50,11 @@ abstract class Ajaxer {
 	 *          if value set to true then it runs for both loggedout / logged in users
 	 *          if value set to false then it runs only for the logged in user
 	 *
+	 * @example array('ajax_action_1' => array('auth' => false,'callback' => array(CLASSNAME,METHODNAME)))
+	 *          if auth value set to true then it runs for both loggedout / logged in users
+	 *          if auth value set to false then it runs only for the logged in user
+	 *          callback can either be a string,array or a actual dynamic function.
+	 *
 	 * @var array
 	 */
 	protected $actions = array();
@@ -67,13 +72,6 @@ abstract class Ajaxer {
 	protected $is_single = false;
 
 	/**
-	 * Provide a action key if $this->is_single is set to true
-	 *
-	 * @var string
-	 */
-	protected $single_ajax_key = '';
-
-	/**
 	 * Ajaxer constructor.
 	 */
 	public function __construct() {
@@ -82,7 +80,7 @@ abstract class Ajaxer {
 		} else {
 			foreach ( $this->actions as $action => $nopriv ) {
 				\add_action( 'wp_ajax_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
-				if ( $nopriv ) {
+				if ( ( ! is_array( $nopriv ) && true === $nopriv ) || ( is_array( $nopriv ) && isset( $nopriv['auth'] ) && true === $nopriv['auth'] ) ) {
 					\add_action( 'wp_ajax_nopriv_' . $this->ajax_slug( $action ), array( &$this, 'ajax_request' ) );
 				}
 			}
@@ -118,13 +116,11 @@ abstract class Ajaxer {
 	 * ajax_action will be replaced with {$this->action}-action from url
 	 */
 	public function ajax_request_single() {
-		$key = $this->action;
-
 		$action = false;
-		if ( isset( $_REQUEST[ $key . '-action' ] ) && ! empty( $_REQUEST[ $key . '-action' ] ) ) {
-			$action = $_REQUEST[ $key . '-action' ];
-		} elseif ( isset( $_REQUEST[ $this->action . '-action' ] ) && ! empty( $_REQUEST[ $this->action . '-action' ] ) ) {
+		if ( isset( $_REQUEST[ $this->action . '-action' ] ) && ! empty( $_REQUEST[ $this->action . '-action' ] ) ) {
 			$action = $_REQUEST[ $this->action . '-action' ];
+		} elseif ( isset( $_REQUEST[ $this->action ] ) && ! empty( $_REQUEST[ $this->action ] ) ) {
+			$action = $_REQUEST[ $this->action ];
 		}
 
 		$_action = $this->extract_action_slug( $action );
@@ -150,6 +146,10 @@ abstract class Ajaxer {
 	protected function extract_action_slug( $action ) {
 		$action = str_replace( $this->action_prefix, '', $action );
 		$action = str_replace( $this->action_surfix, '', $action );
+		$action = ltrim( $action, ' ' );
+		$action = ltrim( $action, '_' );
+		$action = rtrim( $action, ' ' );
+		$action = rtrim( $action, '_' );
 		return $action;
 	}
 
@@ -167,11 +167,11 @@ abstract class Ajaxer {
 		$_function_action = $this->extract_action_slug( $action );
 		if ( method_exists( $this, $this->function_name( $_function_action ) ) ) {
 			$function = $this->function_name( $_function_action );
-			\do_action( 'vs_wp_ajax_before_' . $action );
+			\do_action( 'ajax_before_' . $action );
 			$this->$function();
-			\do_action( 'vs_wp_ajax_after_' . $action );
+			\do_action( 'ajax_after_' . $action );
 		} else {
-			\do_action( 'vs_wp_ajax_' . $action );
+			\do_action( 'ajax_' . $action );
 		}
 	}
 
@@ -194,9 +194,13 @@ abstract class Ajaxer {
 		$_action = $this->extract_action_slug( $action );
 
 		if ( false !== $action && isset( $this->actions[ $_action ] ) ) {
-			$this->trigger_ajax_callback( $_action );
+			if ( is_array( $this->actions[ $_action ] ) && isset( $this->actions[ $_action ]['callback'] ) ) {
+				call_user_func( $this->actions[ $_action ]['callback'] );
+				\wp_die();
+			} else {
+				$this->trigger_ajax_callback( $_action );
+			}
 		}
-
 		\wp_die( 0 );
 	}
 
@@ -244,7 +248,7 @@ abstract class Ajaxer {
 	 *
 	 * @return bool|mixed
 	 */
-	protected function get( $key = '', $default = false ) {
+	public function get( $key = '', $default = false ) {
 		return $this->get_post_request( $key, $default, 'get' );
 	}
 
@@ -259,7 +263,7 @@ abstract class Ajaxer {
 	 */
 	private function get_post_request( $key, $default, $type ) {
 		$return = $default;
-		if ( true === $this->has( $key, $type ) ) {
+		if ( false !== $this->has( $key, $type ) ) {
 			switch ( $type ) {
 				case 'GET':
 				case 'get':
@@ -291,12 +295,14 @@ abstract class Ajaxer {
 	 *
 	 * @return bool
 	 */
-	protected function has( $key = '', $type = 'GET' ) {
+	public function has( $key = '', $type = 'GET' ) {
 		switch ( $type ) {
 			case 'GET':
+			case 'get':
 				$has = ( isset( $_GET[ $key ] ) ) ? $_GET[ $key ] : false;
 				break;
 			case 'POST':
+			case 'post':
 				$has = ( isset( $_POST[ $key ] ) ) ? $_POST[ $key ] : false;
 				break;
 			default:
@@ -314,7 +320,7 @@ abstract class Ajaxer {
 	 *
 	 * @return bool|mixed
 	 */
-	protected function post( $key = '', $default = false ) {
+	public function post( $key = '', $default = false ) {
 		return $this->get_post_request( $key, $default, 'post' );
 	}
 
@@ -326,7 +332,7 @@ abstract class Ajaxer {
 	 *
 	 * @return bool|mixed
 	 */
-	protected function request( $key = '', $default = false ) {
+	public function request( $key = '', $default = false ) {
 		return $this->get_post_request( $key, $default, 'request' );
 	}
 }
