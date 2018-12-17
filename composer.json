@@ -1,0 +1,36 @@
+{
+  "name"        : "varunsridharan/wp-ajaxer",
+  "description" : "Simple Lightweight Ajax Handler For WP Theme/Plugin Developers.",
+  "type"        : "library",
+  "license"     : "GPL-3.0-or-later",
+  "keywords"    : [
+	"wp-library",
+	"wp-developers",
+	"wordpress",
+	"wordpress-development",
+	"wordpress-theme",
+	"wordpress-plugin",
+	"wordpress-plugin-library",
+	"wordpress-theme-library",
+	"library",
+	"php",
+	"ajax",
+	"ajax-handler",
+	"wp-ajax-handler",
+	"wordpress-ajax",
+	"ajax-library",
+	"wp-ajax",
+	"vsp-wp-ajaxer",
+	"wp-theme",
+	"vsp-libs"
+  ],
+  "authors"     : [
+	{
+	  "name"     : "Varun",
+	  "email"    : "varunsridharan23@gmail.com",
+	  "homepage" : "https://varunsridharan.in",
+	  "role"     : "Developer"
+	}
+  ],
+  "require"     : { }
+}
