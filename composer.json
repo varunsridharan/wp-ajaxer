@@ -32,5 +32,10 @@
 	  "role"     : "Developer"
 	}
   ],
-  "require"     : { }
+  "require"     : { },
+  "autoload"    : {
+	"files" : [
+	  "class-ajaxer.php"
+	]
+  }
 }
