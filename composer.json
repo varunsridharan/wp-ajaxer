@@ -34,8 +34,8 @@
   ],
   "require"     : { },
   "autoload"    : {
-	"files" : [
-	  "class-ajaxer.php"
-	]
+	"psr-4" : {
+	  "Varunsridharan\\WordPress\\Ajaxer" : "class-ajaxer.php"
+	}
   }
 }
