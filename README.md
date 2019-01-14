@@ -1,6 +1,13 @@
 # WP Ajaxer
 Simple Lightweight Ajax Handler For WP Theme/Plugin Developers
 
+[![Latest Stable Version](https://poser.pugx.org/varunsridharan/wp-ajaxer/version)](https://packagist.org/packages/varunsridharan/wp-ajaxer)
+[![Total Downloads](https://poser.pugx.org/varunsridharan/wp-ajaxer/downloads)](https://packagist.org/packages/varunsridharan/wp-ajaxer)
+[![Latest Unstable Version](https://poser.pugx.org/varunsridharan/wp-ajaxer/v/unstable)](//packagist.org/packages/varunsridharan/wp-ajaxer)
+[![License](https://poser.pugx.org/varunsridharan/wp-ajaxer/license)](https://packagist.org/packages/varunsridharan/wp-ajaxer)
+[![composer.lock available](https://poser.pugx.org/varunsridharan/wp-ajaxer/composerlock)](https://packagist.org/packages/varunsridharan/wp-ajaxer)
+
+
 
 ## Installation
 The preferred way to install this extension is through [Composer](http://getcomposer.org/download/).
@@ -101,5 +108,5 @@ class BoilerPlate_Ajax extends Varunsridharan\WordPress\Ajaxer {
 
 ---
 ## Sponsored By
-[![DigitalOcean](https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/DO_Logo_Horizontal_Blue.png)](https://s.svarun.in/Ef)
+[![DigitalOcean](https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/DO_Logo_Horizontal_Blue-small.png)](https://s.svarun.in/Ef)  [![JetBrains](https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/phpstorm-small.png?v3)](https://www.jetbrains.com)
 
