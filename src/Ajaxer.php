@@ -61,11 +61,19 @@ abstract class Ajaxer {
 
 	/**
 	 * Set to true if plugin's ajax runs in a single action
+	 * OR
+	 * Set a custom key so convert plugin-slug=ajax-action into your-key=ajax-action
 	 *
-	 * @example Single Ajax Action
-	 *          admin-ajax.php?action=plugin-slug&plugin-slug-action=ajax-action&param1=value1&param2=value=2
-	 *          Multiple Ajax Actions
-	 *          admin-ajax.php?action=plugin-slug-ajax-action1&param1=value1=param2=value2
+	 * @example Single Ajax Action :
+	 *              admin-ajax.php?action=plugin-slug&plugin-slug-action=ajax-action&param1=value1&param2=value=2
+	 *          Multiple Ajax Actions :
+	 *              admin-ajax.php?action=plugin-slug-ajax-action1&param1=value1=param2=value2
+	 *
+	 * @example Single Ajax Action :
+	 *            admin-ajax.php?action=plugin-slug&custom-key-action=ajax-action&param1=value1&param2=value=2
+	 *
+	 *          Multiple Ajax Actions:
+	 *             admin-ajax.php?action=plugin-slug-ajax-action1&param1=value1=param2=value2
 	 *
 	 * @var bool
 	 */
@@ -75,7 +83,7 @@ abstract class Ajaxer {
 	 * Ajaxer constructor.
 	 */
 	public function __construct() {
-		if ( true === $this->is_single ) {
+		if ( false !== $this->is_single ) {
 			\add_action( 'wp_ajax_' . $this->action, array( &$this, 'ajax_request_single' ) );
 		} else {
 			foreach ( $this->actions as $action => $nopriv ) {
@@ -116,11 +124,13 @@ abstract class Ajaxer {
 	 * ajax_action will be replaced with {$this->action}-action from url
 	 */
 	public function ajax_request_single() {
-		$action = false;
-		if ( isset( $_REQUEST[ $this->action . '-action' ] ) && ! empty( $_REQUEST[ $this->action . '-action' ] ) ) {
-			$action = $_REQUEST[ $this->action . '-action' ];
-		} elseif ( isset( $_REQUEST[ $this->action ] ) && ! empty( $_REQUEST[ $this->action ] ) ) {
-			$action = $_REQUEST[ $this->action ];
+		$action     = false;
+		$action_key = ( true === $this->is_single ) ? $this->action : $this->is_single;
+
+		if ( isset( $_REQUEST[ $action_key . '-action' ] ) && ! empty( $_REQUEST[ $action_key . '-action' ] ) ) {
+			$action = $_REQUEST[ $action_key . '-action' ];
+		} elseif ( isset( $_REQUEST[ $action_key ] ) && ! empty( $_REQUEST[ $action_key ] ) ) {
+			$action = $_REQUEST[ $action_key ];
 		}
 
 		$_action = $this->extract_action_slug( $action );
