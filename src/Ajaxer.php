@@ -104,14 +104,9 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 * @return string
 		 */
 		protected function ajax_slug( $action ) {
-			$slug = $action;
-			if ( ! empty( $this->action_prefix ) ) {
-				$slug = $this->action_prefix . '_' . $slug;
-			}
-			if ( ! empty( $this->action_surfix ) ) {
-				$slug .= '_' . $this->action_surfix;
-			}
-			return $slug;
+			$action = ( ! empty( $this->action_prefix ) ) ? $this->action_prefix . '_' . $action : $action;
+			$action = ( ! empty( $this->action_surfix ) ) ? $action . '_' . $this->action_surfix : $action;
+			return $action;
 		}
 
 		/**
@@ -155,13 +150,10 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 * @return string
 		 */
 		protected function extract_action_slug( $action ) {
-			$action = str_replace( $this->action_prefix, '', $action );
-			$action = str_replace( $this->action_surfix, '', $action );
-			$action = ltrim( $action, ' ' );
-			$action = ltrim( $action, '_' );
-			$action = rtrim( $action, ' ' );
-			$action = rtrim( $action, '_' );
-			return $action;
+			return trim( trim( str_replace( array(
+				$this->action_prefix,
+				$this->action_surfix,
+			), '', $action ), ' ' ), '_' );
 		}
 
 		/**
@@ -176,25 +168,14 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 */
 		protected function trigger_ajax_callback( $action ) {
 			$_function_action = $this->extract_action_slug( $action );
-			if ( method_exists( $this, $this->function_name( $_function_action ) ) ) {
-				$function = $this->function_name( $_function_action );
+			$_function_name   = str_replace( '-', '_', \sanitize_key( $_function_action ) );
+			if ( method_exists( $this, $_function_name ) ) {
 				\do_action( 'ajax_before_' . $action );
-				$this->$function();
+				$this->$_function_name();
 				\do_action( 'ajax_after_' . $action );
 			} else {
 				\do_action( 'ajax_' . $action );
 			}
-		}
-
-		/**
-		 * Converts Normal String into php function name
-		 *
-		 * @param $action
-		 *
-		 * @return mixed
-		 */
-		protected function function_name( $action ) {
-			return str_replace( '-', '_', \sanitize_key( $action ) );
 		}
 
 		/**
@@ -216,6 +197,22 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		}
 
 		/**
+		 * Checks / Returns the type of request method for the current request.
+		 *
+		 * @param string|array $type The type of request you want to check. If an array
+		 *                           this method will return true if the request matches any type.
+		 *
+		 * @return string
+		 */
+		public function request_type( $type = null ) {
+			$type = ( ! is_array( $type ) ) ? array( $type ) : $type;
+			if ( ! is_null( $type ) && is_array( $type ) ) {
+				return in_array( $_SERVER['REQUEST_METHOD'], array_map( 'strtoupper', $type ), true );
+			}
+			return $_SERVER['REQUEST_METHOD'];
+		}
+
+		/**
 		 * Checks if Current Request Method Is GET
 		 *
 		 * @return string|bool|boolean
@@ -225,42 +222,12 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		}
 
 		/**
-		 * Checks / Returns the type of request method for the current request.
-		 *
-		 * @param string|array $type The type of request you want to check. If an array
-		 *                           this method will return true if the request matches any type.
-		 *
-		 * @return string
-		 */
-		public function request_type( $type = null ) {
-			if ( ! is_null( $type ) ) {
-				if ( is_array( $type ) ) {
-					return in_array( $_SERVER['REQUEST_METHOD'], array_map( 'strtoupper', $type ) );
-				}
-				return ( strtoupper( $type ) === $_SERVER['REQUEST_METHOD'] );
-			}
-			return $_SERVER['REQUEST_METHOD'];
-		}
-
-		/**
 		 * Checks if Current Request Method Is POST
 		 *
 		 * @return string|bool|boolean
 		 */
 		public function is_post() {
 			return $this->request_type( 'POST' );
-		}
-
-		/**
-		 * Returns give key's value from $_GET
-		 *
-		 * @param string $key
-		 * @param bool   $default
-		 *
-		 * @return bool|mixed
-		 */
-		public function get( $key = '', $default = false ) {
-			return $this->get_post_request( $key, $default, 'get' );
 		}
 
 		/**
@@ -277,17 +244,12 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 			if ( false !== $this->has( $key, $type ) ) {
 				switch ( $type ) {
 					case 'GET':
-					case 'get':
 						$return = $_GET[ $key ];
 						break;
-
 					case 'POST':
-					case 'post':
 						$return = $_POST[ $key ];
 						break;
-
 					case 'REQUEST':
-					case 'request':
 						$return = $_REQUEST[ $key ];
 						break;
 					default:
@@ -309,11 +271,9 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		public function has( $key = '', $type = 'GET' ) {
 			switch ( $type ) {
 				case 'GET':
-				case 'get':
 					$has = ( isset( $_GET[ $key ] ) ) ? $_GET[ $key ] : false;
 					break;
 				case 'POST':
-				case 'post':
 					$has = ( isset( $_POST[ $key ] ) ) ? $_POST[ $key ] : false;
 					break;
 				default:
@@ -321,6 +281,18 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 					break;
 			}
 			return $has;
+		}
+
+		/**
+		 * Returns give key's value from $_GET
+		 *
+		 * @param string $key
+		 * @param bool   $default
+		 *
+		 * @return bool|mixed
+		 */
+		public function get( $key = '', $default = false ) {
+			return $this->get_post_request( $key, $default, 'GET' );
 		}
 
 		/**
