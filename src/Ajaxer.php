@@ -318,5 +318,105 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		public function request( $key = '', $default = false ) {
 			return $this->get_post_request( $key, $default, 'request' );
 		}
+
+		/**
+		 * @param bool|string $error_title
+		 * @param bool|string $error_message
+		 *
+		 * @return array
+		 */
+		protected function error_message( $error_title = false, $error_message = false ) {
+			return array(
+				'title'   => $error_title,
+				'message' => $error_message,
+			);
+		}
+
+		/**
+		 * @param bool|string $success_title
+		 * @param bool|string $success_message
+		 *
+		 * @return array
+		 */
+		protected function success_message( $success_title = false, $success_message = false ) {
+			return array(
+				'title'   => $success_title,
+				'message' => $success_message,
+			);
+		}
+
+		/**
+		 * @param mixed $data
+		 * @param null  $status_code
+		 */
+		protected function json_error( $data = null, $status_code = null ) {
+			wp_send_json_error( $data, $status_code );
+		}
+
+		/**
+		 * @param mixed $data
+		 * @param null  $status_code
+		 */
+		protected function json_success( $data = null, $status_code = null ) {
+			wp_send_json_success( $data, $status_code );
+		}
+
+		/**
+		 * @param string      $key
+		 * @param string|bool $error_title
+		 * @param string|bool $error_message
+		 * @param string      $type
+		 *
+		 * @return bool|mixed
+		 */
+		protected function validate( $key, $error_title = false, $error_message = false, $type = 'GET' ) {
+			if ( ( false === $key || false === $this->has( $key, $type ) ) || ( true === $this->has( $key, $type ) && empty( $this->get_post_request( $key, false, $type ) ) ) ) {
+				$this->json_error( $this->error_message( $error_title, $error_message ) );
+				return false;
+			}
+			return $this->get_post_request( $key, false, $type );
+		}
+
+		/**
+		 * Sends WP Error.
+		 *
+		 * @param string|bool $error_title
+		 * @param string|bool $error_message
+		 * @param array       $args
+		 */
+		protected function error( $error_title = false, $error_message = false, $args = array() ) {
+			$this->json_error( wp_parse_args( $args, $this->error_message( $error_title, $error_message ) ) );
+		}
+
+		/**
+		 * @param bool|string $success_title
+		 * @param bool|string $success_message
+		 * @param array       $args
+		 */
+		protected function success( $success_title = false, $success_message = false, $args = array() ) {
+			$this->json_success( wp_parse_args( $args, $this->success_message( $success_title, $success_message ) ) );
+		}
+
+		/**
+		 * @param string      $key
+		 * @param string|bool $error_title
+		 * @param string|bool $error_message
+		 *
+		 * @return bool|mixed
+		 */
+		protected function validate_post( $key, $error_title = false, $error_message = false ) {
+			return $this->validate( $key, $error_title, $error_message, 'POST' );
+		}
+
+		/**
+		 * @param string      $key
+		 * @param string|bool $error_title
+		 * @param string|bool $error_message
+		 *
+		 * @return bool|mixed
+		 */
+		protected function validate_get( $key, $error_title = false, $error_message = false ) {
+			return $this->validate( $key, $error_title, $error_message, 'GET' );
+		}
 	}
 }
