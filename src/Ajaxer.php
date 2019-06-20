@@ -331,7 +331,7 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 * @return bool|mixed
 		 */
 		public function post( $key = '', $default = false ) {
-			return $this->get_post_request( $key, $default, 'post' );
+			return $this->get_post_request( $key, $default, 'POST' );
 		}
 
 		/**
@@ -343,7 +343,7 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 * @return bool|mixed
 		 */
 		public function request( $key = '', $default = false ) {
-			return $this->get_post_request( $key, $default, 'request' );
+			return $this->get_post_request( $key, $default, 'REQUEST' );
 		}
 
 		/**
