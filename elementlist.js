@@ -1,3 +1,3 @@
 
 var ApiGen = ApiGen || {};
-ApiGen.elements = [["c","VSP_Ajaxer"]];
+ApiGen.elements = [["c","Varunsridharan\\WordPress\\Ajaxer"]];
