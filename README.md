@@ -117,8 +117,6 @@ class BoilerPlate_Ajax extends Varunsridharan\WordPress\Ajaxer {
 * `validate_post($key,$error)` -> Checks if given key is exits in **$_POST** if not send an error
 * `validate_get($key,$error)` -> Checks if given key is exits in **$_GET** if not send an error
 
-
-
 ---
 
 <!-- START common-footer.mustache  -->
