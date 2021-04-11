@@ -106,8 +106,7 @@ if ( ! class_exists( '\Varunsridharan\WordPress\Ajaxer' ) ) {
 		 */
 		final protected function ajax_slug( $action ) {
 			$action = ( ! empty( $this->action_prefix ) ) ? $this->action_prefix . '_' . $action : $action;
-			$action = ( ! empty( $this->action_surfix ) ) ? $action . '_' . $this->action_surfix : $action;
-			return $action;
+			return ( ! empty( $this->action_surfix ) ) ? $action . '_' . $this->action_surfix : $action;
 		}
 
 		/**

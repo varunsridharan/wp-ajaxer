@@ -118,39 +118,15 @@ class BoilerPlate_Ajax extends Varunsridharan\WordPress\Ajaxer {
 * `validate_get($key,$error)` -> Checks if given key is exits in **$_GET** if not send an error
 
 
+
 ---
 
-## Contribute
-If you would like to help, please take a look at the list of
-[issues][issues] or the [To Do](#-todo) checklist.
+<!-- START common-footer.mustache  -->
 
-## License
-This project is licensed under **General Public License v3.0 license**. See the [LICENSE](LICENSE) file for more info.
+<!-- END common-footer.mustache  -->
 
-## Copyright
-2017 - 2019 Varun Sridharan, [varunsridharan.in][website]
-
-If you find it useful, let me know :wink:
-
-You can contact me on [Twitter][twitter] or through my [email][email].
-
-## Backed By
-| [![DigitalOcean][do-image]][do-ref] | [![JetBrains][jb-image]][jb-ref] |  [![Tidio Chat][tidio-image]][tidio-ref] |
-| --- | --- | --- |
-
-[twitter]: https://twitter.com/varunsridharan2
-[email]: mailto:varunsridharan23@gmail.com
-[website]: https://varunsridharan.in
-[issues]: issues/
 [composer]: http://getcomposer.org/download/
 [downloadzip]:https://github.com/varunsridharan/wp-ajaxer/archive/master.zip
-
-[do-image]: https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/DO_Logo_Horizontal_Blue-small.png
-[jb-image]: https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/phpstorm-small.png?v3
-[tidio-image]: https://vsp.ams3.cdn.digitaloceanspaces.com/cdn/tidiochat-small.png
-[do-ref]: https://s.svarun.in/Ef
-[jb-ref]: https://www.jetbrains.com
-[tidio-ref]: https://tidiochat.com
 
 [latest-stable-version-img]: https://poser.pugx.org/varunsridharan/wp-ajaxer/version
 [latest-Unstable-version-img]: https://poser.pugx.org/varunsridharan/wp-ajaxer/v/unstable
